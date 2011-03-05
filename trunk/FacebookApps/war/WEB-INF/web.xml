@@ -6,6 +6,15 @@
 <web-app>
   
   <!-- Servlets -->
+  <servlet>
+    <servlet-name>transferService</servlet-name>
+    <servlet-class>fbapp.server.TransferServiceImpl</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>transferService</servlet-name>
+    <url-pattern>/facebookapps/transfer</url-pattern>
+  </servlet-mapping>
   
   <!-- Default page to serve -->
   <welcome-file-list>
