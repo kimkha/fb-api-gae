@@ -3,13 +3,20 @@ package fbapp.client.lib;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.RootPanel;
+
+import fbapp.client.rpc.TransferService;
+import fbapp.client.rpc.TransferServiceAsync;
 
 public class FB {
 	private static String appId = null;
@@ -69,23 +76,20 @@ public class FB {
 		} else {
 			String accessToken = Window.Location.getHash().substring(1);
 			final String graphUrl = "https://graph.facebook.com/me?" + accessToken;
+			//Window.Location.replace(graphUrl);
 			
 			// Request Graph API
-			RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, graphUrl);
-			try {
-				builder.sendRequest(null, new RequestCallback() {
-					@Override
-					public void onResponseReceived(Request request, Response response) {
-						callback.onComplete(graphUrl+"||"+response.getText());
-					}
-					@Override
-					public void onError(Request request, Throwable exception) {
-						
-					}
-				});
-			} catch (RequestException e) {
-				// Code omitted for clarity
-			}
+			TransferServiceAsync service = GWT.create(TransferService.class);
+			service.getContent(graphUrl, new AsyncCallback<String>() {
+				@Override
+				public void onSuccess(String result) {
+					callback.onComplete(result);
+				}
+				@Override
+				public void onFailure(Throwable caught) {
+					
+				}
+			});
 		}
 	}
 
