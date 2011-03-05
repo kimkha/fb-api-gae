@@ -3,13 +3,25 @@ package fbapp.client.lib;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Window;
 
 public class FB {
-	private static FBSession currentSession = null;
+	private static String appId = null;
+	private static boolean cookie = false;
+	private static boolean logging = true;
+	private static FBSession session = null;
+	private static boolean status = true;
+	private static boolean xfbml = false;
+	private static String channelUrl = null;
 	
 	public static FBSession getSession() {
-		return currentSession;
+		return session;
 	}
 	
 	public static void getLoginStatus(FBCallback callback) {
@@ -20,16 +32,61 @@ public class FB {
 		
 	}
 	
-	public static void init(Map<String, String> options) {
-		
+	public static void init(Map<String, Object> options) {
+		if (options.containsKey("appId")) {
+			appId = (String) options.get("appId");
+		}
+		if (options.containsKey("cookie")) {
+			cookie = (Boolean) options.get("cookie");
+		}
+		if (options.containsKey("logging")) {
+			logging = (Boolean) options.get("logging");
+		}
+		if (options.containsKey("session")) {
+			session = (FBSession) options.get("session");
+		}
+		if (options.containsKey("status")) {
+			status = (Boolean) options.get("status");
+		}
+		if (options.containsKey("xfbml")) {
+			xfbml = (Boolean) options.get("xfbml");
+		}
+		if (options.containsKey("channelUrl")) {
+			channelUrl = (String) options.get("channelUrl");
+		}
 	}
-	
-	public static void login(FBCallback callback) {
-		
+
+	public static void login(final FBCallback callback) {
+		login(callback, null);
 	}
-	
-	public static void login(FBCallback callback, Map<String, String> options) {
-		
+
+	public static void login(final FBCallback callback, Map<String, String> options) {
+		if (Window.Location.getHash().length() <= 0) {
+			String url = "https://www.facebook.com/dialog/oauth?client_id=" + 
+					appId  + "&redirect_uri=" + Window.Location.getHref() +
+					"&response_type=token";
+			Window.Location.replace(url);
+		} else {
+			String accessToken = Window.Location.getHash().substring(1);
+			final String graphUrl = "https://graph.facebook.com/me?" + accessToken;
+			
+			// Request Graph API
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, graphUrl);
+			try {
+				builder.sendRequest(null, new RequestCallback() {
+					@Override
+					public void onResponseReceived(Request request, Response response) {
+						callback.onComplete(graphUrl+"||"+response.getText());
+					}
+					@Override
+					public void onError(Request request, Throwable exception) {
+						
+					}
+				});
+			} catch (RequestException e) {
+				// Code omitted for clarity
+			}
+		}
 	}
 
 	public static void logout(FBCallback callback) {
