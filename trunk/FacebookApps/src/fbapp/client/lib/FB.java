@@ -4,16 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.RootPanel;
 
 import fbapp.client.rpc.TransferService;
 import fbapp.client.rpc.TransferServiceAsync;
@@ -75,8 +68,8 @@ public class FB {
 			Window.Location.replace(url);
 		} else {
 			String accessToken = Window.Location.getHash().substring(1);
-			final String graphUrl = "https://graph.facebook.com/me?" + accessToken;
-			//Window.Location.replace(graphUrl);
+			//final String graphUrl = "https://graph.facebook.com/me";
+			final String graphUrl = "https://graph.facebook.com/me?"+accessToken;
 			
 			// Request Graph API
 			TransferServiceAsync service = GWT.create(TransferService.class);
