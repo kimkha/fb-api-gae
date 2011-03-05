@@ -20,6 +20,35 @@ public class FB {
 	private static boolean xfbml = false;
 	private static String channelUrl = null;
 	
+	private static void fetchURL(String url, final FBCallback callback) {
+		TransferServiceAsync service = GWT.create(TransferService.class);
+		service.getContent(url, new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
+				callback.onComplete(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				callback.onComplete(null);
+			}
+		});
+	}
+	
+	@SuppressWarnings("unused")
+	private static void fetchURL(String url, String params, final FBCallback callback) {
+		TransferServiceAsync service = GWT.create(TransferService.class);
+		service.getContent(url, new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
+				callback.onComplete(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				callback.onComplete(null);
+			}
+		});
+	}
+	
 	public static FBSession getSession() {
 		return session;
 	}
@@ -28,10 +57,26 @@ public class FB {
 		
 	}
 	
-	public static void api(Map<String, String> params, FBCallback callback) {
+	public static void api(Map<String,String> params, FBCallback callback) {
 		
 	}
-	
+
+	public static void api(String path, FBCallback callback) {
+		
+	}
+
+	public static void api(String path, Map<String,String> params, FBCallback callback) {
+		
+	}
+
+	public static void api(String path, String method, FBCallback callback) {
+		
+	}
+
+	public static void api(String path, String method, Map<String,String> params, FBCallback callback) {
+		
+	}
+
 	public static void init(Map<String, Object> options) {
 		if (options.containsKey("appId")) {
 			appId = (String) options.get("appId");
@@ -72,17 +117,7 @@ public class FB {
 			final String graphUrl = "https://graph.facebook.com/me?"+accessToken;
 			
 			// Request Graph API
-			TransferServiceAsync service = GWT.create(TransferService.class);
-			service.getContent(graphUrl, new AsyncCallback<String>() {
-				@Override
-				public void onSuccess(String result) {
-					callback.onComplete(result);
-				}
-				@Override
-				public void onFailure(Throwable caught) {
-					
-				}
-			});
+			fetchURL(graphUrl, callback);
 		}
 	}
 
