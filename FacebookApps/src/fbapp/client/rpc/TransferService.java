@@ -6,5 +6,6 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("transfer")
 public interface TransferService extends RemoteService {
 	String getContent(String urlStr);
+
 	String fetchContent(String urlStr, String params);
 }
